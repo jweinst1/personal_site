@@ -22,4 +22,9 @@ What makes `dr4` unique is that, unlike other binary data formats, it's not limi
 
 [Repository](https://github.com/jweinst1/Wind)
 
+Wind is a flow-based programming language intended for ultra fast performance, and high portability. It's a language meant to be used on embedded systems, or for resource-constrained systems. Wind allows fast, efficient manipulation and processing of dynamically typed data, without using dynamic memory allocation. 
+
+It supports common collection operations such as mapping, filtering, and reduction. This book details the paradigm of flow-based programming in a new perspective, dealing with optimizing small scale environments for large scale work. The first section of the book covers the fundamentals of flow-based programming relevant to understanding the Wind language. The next section delves into the syntax and type system of Wind. One of the huge advantages of Wind is it uses a compact, byte-sized type system that can write data to files and easily load it again later. 
+
+This section also covers the commands and flow of source code to optimize programming in Wind. Lastly, the final section covers the implementation of Wind and the techniques used under the hood to ramp up performance and scalability.
 
