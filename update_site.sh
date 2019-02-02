@@ -1,5 +1,6 @@
 # Script used to update both site deployment and repo
 echo "updating the site"
+hexo clean
 hexo generate
 hexo deploy
 git add .
