@@ -1,3 +1,4 @@
+# Script used to update both site deployment and repo
 echo "updating the site"
 hexo generate
 hexo deploy
