@@ -61,3 +61,21 @@ Previously, we discussed *types*, and their sizes. All values, data, and variabl
 > stack: Memory used within a function's call frame. It only exist while the stack frame of a function has not yet hit a *return* statement.
 > heap: Memory allocated from functions like *malloc*, *calloc*, or *realloc*. This memory exists until it is deallocated with *free*.
 > static: Memory used by declaring a variable *static*. This type of memory lives for the entire time the program is running, and usually is located in the data segment of the executable from the C program being run.
+
+Unlike stack memory, heap memory is never freed automatically during the runtime of the program. C++ classes have destructors or smart pointers which can do this, but C does not. Abandoning the last pointer to a chunk of heap memory without freeing it results in a *memory leak*, a situation where allocated memory on the heap can no longer be reached in order to be freed.
+
+Below are examples of pointers to different types of memory:
+
+```c
+static int foo = 6;
+int doo = 3;
+int* static_ptr = &foo;
+int* heap_ptr = malloc(sizeof(int));
+int* stack_ptr = &doo; 
+```
+
+Here, `foo` is declared as `static`, rendering it static memory. Although we are not inside a function body, assume that `doo` is a stack allocated variable and not a *global* variable. The pointer `static_ptr` is initialized via using the addressof operator, `&`. Yet, `heap_ptr` is not. That's because the function `malloc` already returns a pointer, not a value. The addressof operator is used to determine the address of a value. Specifically, these are values that are not lvalues. For now, let's look at addresses:
+
+### Addresses
+
+All bytes in memory, be it stack memory, static memory, or heap memory carry some *address*.
