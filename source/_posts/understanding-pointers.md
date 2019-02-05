@@ -74,8 +74,59 @@ int* heap_ptr = malloc(sizeof(int));
 int* stack_ptr = &doo; 
 ```
 
-Here, `foo` is declared as `static`, rendering it static memory. Although we are not inside a function body, assume that `doo` is a stack allocated variable and not a *global* variable. The pointer `static_ptr` is initialized via using the addressof operator, `&`. Yet, `heap_ptr` is not. That's because the function `malloc` already returns a pointer, not a value. The addressof operator is used to determine the address of a value. Specifically, these are values that are not lvalues. For now, let's look at addresses:
+Here, `foo` is declared as `static`, rendering it static memory. Although we are not inside a function body, assume that `doo` is a stack allocated variable and not a *global* variable. The pointer `static_ptr` is initialized via using the addressof operator, `&`. Yet, `heap_ptr` is not. That's because the function `malloc` already returns a pointer, not a value. The addressof operator is used to determine the address of a value. Specifically, these are values that are not lvalues. For now, let's talk about addresses.
+
+## Pointers
+
+Now that we have discussed some fundamentals of C sizes and data types, let's dive into the main topic, pointers.
 
 ### Addresses
 
-All bytes in memory, be it stack memory, static memory, or heap memory carry some *address*.
+All bytes in memory, be it stack memory, static memory, or heap memory carry some *address*. An address is a unique, integer location of where a value currently exists in memory. Much like real residental and business addresses, each address is unique, and can tell us how to find where someone lives, or where some business operates. Similarly, values and data can move between addresses, if a program reads and writes them accordingly. Just as people move to new residences, and so on.
+
+Unlike real people though, values in C, and related languages can exist without an address. This distinction is known as *lvalues* and *rvalues*. An *lvalue* in C is a value that's normally found on the left side of an assignment statement `=`. While an *rvalue* is normally found on the right side. For example,
+
+```c
+int x = 4;
+int* y /*lvalue*/ = &x; /*rvalue*/
+``` 
+
+In the above example, `int * y` is an lvalue because it's a declaration. It's not a quanatitive or data-based value. We can perform operations *on* y. `&x` is an rvalue, because it's an address, an immutable integer. We can't perform operations on `&x` because it's an immutable constant.
+
+### Indirection
+
+The primary purpose of pointers is to pass around values without having to copy the entire value every time it moves. A part of that purose is also to be able to read and write to the address in memory that a pointer *points* to. This is done through pointer *indirection*. Indirection is an expression, an lvalue, that corresponds to the data a pointer points to. The following is a full program example to illustrate this.
+
+```c
+#include <stdio.h>
+
+int main(void) {
+	int a = 5;
+	int* b = &a;
+	while(a < 50) {
+		*b += 5;
+		printf("a is now %d\n", a);
+	}
+	return 0;
+}
+```
+
+This program will print several messages to `stdout` like so:
+
+```
+a is now 10
+a is now 15
+a is now 20
+a is now 25
+a is now 30
+a is now 35
+a is now 40
+a is now 45
+a is now 50
+```
+
+In this program, a stack-allocated integer, `a`, is being continuously added to by a pointer to it's address, `b`. The pointer manages this by *indirection*. It uses the unary `*` operator to create an lvalue that allows binary operations like addition, in this case. Furthermore, it is always true that, `a == *b`. Thus, the statements `a += 5;` and `*b += 5` are equivalent.
+
+### Pointer Arithmetic
+
+
