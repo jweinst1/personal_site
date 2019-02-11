@@ -129,4 +129,35 @@ In this program, a stack-allocated integer, `a`, is being continuously added to 
 
 ### Pointer Arithmetic
 
+Pointers can be modified via arithmetic. Previously, we have seen pointers moved with the increment and decrement operators, `++` and `--` respectively. However, pointers can also be modified via *relative expressions*. In one of the first sections, we explored pointers represent different *sizes* of data.
 
+When pointers are expressed via arithmetic, they are expressed in respect to the size they represent. For example:
+
+```c
+#include <stdio.h>
+
+int main(void) {
+    int bin[5];
+    int* b = bin;
+    while(b < bin + 4) {
+        printf("the value of b is %d, while the address is %p\n", *b, b);
+        b++;
+    }
+    return 0;
+}
+```
+
+The program above iterates through on array of integers, printing the address of each integer and it's value. This example also brings up another concept, the similarity between *arrays* and *pointers*. For now though, let's break down what's going on:
+
+```c
+while(b < bin + 4)
+```
+
+In this `while` condition, we are comparing the addresses of pointers, as well as expressing a pointer four addresses *forward*. In memory, addresses are sequential, and go higher in number as each successive stack frame increases. 
+
+```
+the value of b is 0, while the address is 0x7ffeefbff560
+the value of b is 0, while the address is 0x7ffeefbff564
+the value of b is 0, while the address is 0x7ffeefbff568
+the value of b is 0, while the address is 0x7ffeefbff56c
+```
