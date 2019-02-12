@@ -1,5 +1,6 @@
 ---
 title: Understanding Pointers
+date: 2019-02-02 00:10:18
 categories:
 - guides
 - C
@@ -153,7 +154,7 @@ The program above iterates through on array of integers, printing the address of
 while(b < bin + 4)
 ```
 
-In this `while` condition, we are comparing the addresses of pointers, as well as expressing a pointer four addresses *forward*. In memory, addresses are sequential, and go higher in number as each successive stack frame increases. 
+In this `while` condition, we are comparing the addresses of pointers, as well as expressing a pointer four addresses *forward*. In memory, addresses are sequential, and increase as each successive stack frame is created. The `<` operator for pointers, and similar logical operators, act in respect to the size of data the pointer points to. We can see this in the output of the program:
 
 ```
 the value of b is 0, while the address is 0x7ffeefbff560
@@ -161,3 +162,5 @@ the value of b is 0, while the address is 0x7ffeefbff564
 the value of b is 0, while the address is 0x7ffeefbff568
 the value of b is 0, while the address is 0x7ffeefbff56c
 ```
+
+
