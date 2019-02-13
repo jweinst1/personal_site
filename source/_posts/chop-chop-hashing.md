@@ -34,6 +34,83 @@ The *chop chop* hashing algorithm can be defined as:
 > Each state shall represent a number of bits to left shift *S*,
 > For all states *q* in *Q*, `q < bits(S)`, where `bits(S)` is the length of S in bits.
 > Let *F(q1) -> q2* be a transition function, that has a both a domain and range of *Q*
+> Let *q_i* be the initial state, and *q_c* be the current state.
 > For all integers in *S*:
+>> Let *c* be an integer from *S*
+>> Shift *w* to the left by *q_i* bits.
+>> Perform a bitwise operation on *w* and *c*
+>> Apply the state transition function `q_c = F(q_i)`
+>> Repeat, starting with *q_c* if the initial state is already transitioned.
 
+The above definition results in *w* becoming hash digest. The "chop" name comes from the use of the left shift operator to perform XOR operations on only a slice or subset of the entire word. The varying slice of *w* being altered helps increase entropy in 32-bit, 64-bit, or greater sizes of digests. The variability of both *S* and *F(q1) -> q2* make the chop chop hash a great one way function, and extremely difficult to reverse.
 
+### Implementation
+
+For the most fundamental version of the *chop chop* algorithm, we can implent a function in C. This function shall take a C-string, (`\0` terminated sequences of `char`) as input, and return an unsigned 32-bit integer, representing the hash digest. The following implementation assumes `sizeof(unsgined) == 4`:
+
+```c
+unsigned chop_chop_hash(const char* text)
+{
+	unsigned chop_word = 0x4F3F28DB;
+	int state = 0;
+	while(*text) {
+		chop_word = chop_word ^ ((*text++) << state);
+		state += (state == 24 ? -24 : 8);
+	}
+	return chop_word;
+}
+```
+
+Lets break down the above code to map the parts of the algorithm to what's in the code.
+
+#### S: Sequence of Integers
+
+In this function, *S* would be the `text` parameter,
+
+```c
+(const char* text)
+```
+
+#### w: A Word
+
+Here, *w* is `chop_word`, the unsigned integer created at the top of the function:
+
+```c
+unsigned chop_word = 0x4F3F28DB;
+```
+
+`chop_word` begins with a large, non-relevant value. This is to allow smaller inputs to not have hash digests that are also too small. Hashes often get modded down, and if too many inputs result in low digests, more collisions will occur. 
+
+#### Q: A set of states
+
+`state` represents the set of states. Now, this isn't a true set. That's because for the most fundamental chop chop, the state is just incremented. It then resets after it reaches the state of `24`. In this implementation, the states represent the 8bit boundaries at which to left shift *w*.
+
+```c
+int state = 0;
+```
+
+#### Bitwise Operation on Word
+
+The bitwise operation on the word described in the definition of the algorithm is this line:
+
+```c
+chop_word = chop_word ^ ((*text++) << state);
+```
+
+We take the current integer, which is really a `char` in this case, from *S*, shift it to the left according to the state, the XOR with *w*.
+
+#### Transition Function
+
+The transition function for the set of states in this case is the following line:
+
+```c
+state += (state == 24 ? -24 : 8);
+```
+
+This will keep incrementing the state by 8 bits, or normally the `CHAR_BIT` amount of bits, and reset once it gets to `24`. It resets at 24 due to the digest being 32bits in size. The expression `c << 24` allows the XOR operation in the previous line to target the most significant byte within the hash word.
+
+For more varied and secure implementations, the state values can be intentionally misplaced. That way, the hash word is not really treated as a word containing *r integers of size Z*, where the nth integer of the input and the nth integer of the word undergo XOR, but rather the word acting as a *pool* of bits. Here, the states can take on any number of bits within the size of the word.
+
+## Fine State Version
+
+In the last section, a fundamental, clean version of *chop chop* was discussed. Now, let's look at a somewhat different version, that allows state in *fine* bit values.
