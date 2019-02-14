@@ -113,4 +113,54 @@ For more varied and secure implementations, the state values can be intentionall
 
 ## Fine State Version
 
-In the last section, a fundamental, clean version of *chop chop* was discussed. Now, let's look at a somewhat different version, that allows state in *fine* bit values.
+In the last section, a fundamental, clean version of *chop chop* was discussed. Now, let's look at a somewhat different version, that allows state in *fine* bit values. Using more states allows for finer digests, because the *chop* of bits in the word that are affected by XOR is more variable. This will increase entropy for larger inputs.
+
+Here is a sample implementation:
+
+```c
+unsigned chop_chop_fine(const char* text)
+{
+    unsigned chop_word = 0x4F3F28DB;
+    int state = 5;
+    while(*text) {
+        chop_word = chop_word ^ ((*text++) << state);
+        state += (state == 31 ? -26 : 1);
+    }
+    return chop_word;
+}
+```
+
+The only change in this function is the state. Instead of starting at `0`, the state starts at 5 and goes up to 31. This is to allow XOR slicing at uneven segments, in an attempt to produce more *fine* digests.
+
+To more easily gauge how the hash digest changes with the input, we can use a simple macro:
+
+```c
+
+#define PRINT_HASH(string, fn) printf("The hash of '%s' is %u\n", string, fn(string))
+```
+
+And some example results:
+
+```
+The hash of 'hello' is 1329576091
+The hash of 'world!' is 1329538299
+The hash of 'Cardiologists' is 1334230011
+The hash of 'my cat is named tom' is 1825024571
+The hash of 'my name is bob, what's yours?' is 2936732315
+```
+
+Compared to the previous hash function:
+
+
+```
+The hash of 'hello' is 592661980
+The hash of 'world!' is 592275144
+The hash of 'foo' is 1330661309
+The hash of 'key' is 1330007472
+The hash of 'my name is bob, what's yours?' is 1027949521
+```
+
+**Notes**
+* The base chop chop function has a higher entropy for smaller inputs.
+* The fine function has more spread out digests for larger inputs.
+* The most siginificant bits in a digest are the best for producing more entropy.
