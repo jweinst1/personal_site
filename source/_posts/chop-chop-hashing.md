@@ -1,6 +1,6 @@
 ---
 title: The Chop Chop Hash
-date: 2019-02-11 00:15:18
+date: 2019-02-13 00:15:18
 categories:
 - C
 - Crypto
@@ -164,3 +164,6 @@ The hash of 'my name is bob, what's yours?' is 1027949521
 * The base chop chop function has a higher entropy for smaller inputs.
 * The fine function has more spread out digests for larger inputs.
 * The most siginificant bits in a digest are the best for producing more entropy.
+
+
+
